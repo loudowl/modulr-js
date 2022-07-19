@@ -7,7 +7,7 @@ const fs = require('fs');
 const dir = __dirname;
 
 const conf = JSON.parse(Helper.readFile(`${dir}/package.json`));
-
+let iter = 0;
 const date = DateTime(new Date(), '%Y-%m-%d');
 // comment banner
 const comment = `
@@ -19,41 +19,39 @@ const comment = `
 `;
 
 // clean
-cleandir('js/**')
-// cleandir('src/tmp/*.tmp')
-//cleandir('**/*.js');
-process.exit();
+cleandir('footest/**')
+    .then(() => {
+        return cleandir('src/tmp/*.tmp');
+    })
+    .then(() => {
+        // copy:dist
+        return copy('src/modulr.js', 'footest/modulr.js', (content) => {
+            content = content.replace('{{version}}', conf.version);
+            content = content.replace('//${returnValue}', 'return window.Modulr || app;');
+            content = [comment.replace('{{varMode}}', ''), content].join('\n\n');
+            return content;
+        })
+    })
+    .then(() => {
+        // copy:privateScope
+        return copy('src/modulr.js', 'footest/modulr.scope.js', (content) => {
+            content = content.replace('${version}', conf.version);
+            content = content.replace('//${returnValue}', 'return app;');
+            content = [comment.replace('{{varMode}}', ' (private scope)'), content].join('\n\n');
+            return content;
+        })
+    })
+    .then(() => {
+        // copy:demo
+        return copy('js/modulr.js', 'demo/js/modulr.js');
+    })
 
-// copy:dist
-copy('src/modulr.js', 'footest/modulr.js', (content) => {
-    content = content.replace('{{version}}', conf.version);
-    content = content.replace('//${returnValue}', 'return window.Modulr || app;');
-    content = [comment.replace('{{varMode}}', ''), content].join('\n\n');
-    return content;
-})
-
-// copy:privateScope
-copy('src/modulr.js', 'footest/modulr.scope.js', (content) => {
-    content = content.replace('${version}', conf.version);
-    content = content.replace('//${returnValue}', 'return app;');
-    content = [comment.replace('{{varMode}}', ' (private scope)'), content].join('\n\n');
-    return content;
-})
-
-// copy:demo
-
-
-async function cleandir(pattern) {
-    const promise = new Promise((resolve, reject) => {
+function cleandir(pattern) {
+    return new Promise((resolve, reject) => {
         const match = glob(pattern);
-        console.log('matchin >>')
+        let arr = []
         match.on('match', (info) => {
-            // if (Helper.isFileExists(info.absolute)) {
-            //     fs.unlink(info.absolute, (err) => {
-            //       if (err) throw err;
-            //     });
-            // }
-            console.log('>>', info);
+            arr.push(info)
         });
 
         match.on('error', (err) => {
@@ -62,27 +60,27 @@ async function cleandir(pattern) {
         });
 
         match.on('end', () => {
-            console.log('done')
+            for (let i = 0; i < arr.length; i++) {
+                let info = arr[i];
+                console.log(info);
+                if (Helper.isFileExists(info.absolute)) {
+                    fs.unlinkSync(info.absolute);
+                } else if (Helper.isPathExists(info.absolute)) {
+                    fs.rmdirSync(info.absolute, { recursive: true });
+                }
+            }
+            console.log('cleandir', pattern, ++iter)
             resolve();
         });
-        console.log('')
     });
-
-    promise(() => {
-        console.log('yes')
-    });
-    console.log('here >>')
-
-    const res = await promise;
-    return res;
 }
 
 function minify(pattern) {
 
 }
 
-async function globcopy(source, dest, process) {
-    const promise = new Promise((resolve, reject) => {
+function globcopy(source, dest, process) {
+    return new Promise((resolve, reject) => {
         if (Helper.isPathExists(source)) {
             const match = glob(pattern);
 
@@ -103,16 +101,14 @@ async function globcopy(source, dest, process) {
             match.on('end', () => {
                 resolve();
             });
+        } else {
+            resolve();
         }
     })
-
-    const res = await promise;
-    return res;
 }
 
-async function copy(sourceFile, destFile, process) {
-    const promise = new Promise((resolve, reject) => {
-
+function copy(sourceFile, destFile, process) {
+    return new Promise((resolve, reject) => {
         if (Helper.isFileExists(sourceFile)) {
             let content = Helper.readFile(sourceFile);
             if (typeof process === 'function') {
@@ -130,13 +126,12 @@ async function copy(sourceFile, destFile, process) {
             }
 
             Helper.writeFile(destFile, content);
+            console.log('copy', sourceFile, ++iter)
+            resolve();
         } else {
             reject('file not found!');
         }
     });
-
-    const res = await promise;
-    return res;
 }
 
 function glob(pattern) {
