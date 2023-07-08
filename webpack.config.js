@@ -2,17 +2,21 @@ const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const babel = require('@babel/core');
 
 module.exports = {
   entry: './es6src/app/main.ts',
   output: {
     path: path.resolve(__dirname, 'es6dist'),
     filename: 'main.js',
+    library: 'Modulr',
+    libraryExport: 'default',
+    libraryTarget: 'umd',
   },
   module: {
     rules: [
       {
-        test: /\.(js|ts)$/,
+        test: /\.ts$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -24,13 +28,35 @@ module.exports = {
       },
     ],
   },
+  resolve: {
+    extensions: ['.ts', '.js'],
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin({
       patterns: [
         {
           from: 'es6src',
-          to: '../es6dist',
+          globOptions: {
+            dot: true,
+            gitignore: true,
+          },
+          to({ context, absoluteFilename }) {
+            const relativePath = path.relative(context, absoluteFilename);
+            const newFilename = relativePath.replace(/\.ts$/, '.js');
+            return path.join('', newFilename);
+          },
+          transform(content, filePath) {
+            if (path.extname(filePath) === '.ts') {
+              const transpiled = babel.transformSync(content, {
+                filename: filePath,
+                presets: ['@babel/preset-env', '@babel/preset-typescript'],
+                plugins: ['@babel/plugin-transform-typescript'],
+              });
+              return transpiled.code;
+            }
+            return content;
+          },
         },
       ],
     }),

@@ -1,5 +1,4 @@
-import { randomCat } from './util/randomCat.ts';
-import { bigConsole } from './util/bigConsole.js';
+import { randomCat } from './util/randomCat';
 
 console.log(
   'load randomCat from /util/randomCat.js in src/app/main js',
@@ -7,5 +6,3 @@ console.log(
 );
 
 console.log('Now load an async function from the helper', randomCat.loadACat());
-
-bigConsole('we are now transpiling es6 js and es6 TS!!!');

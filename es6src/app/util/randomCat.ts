@@ -12,9 +12,10 @@ const randomCat = {
     const width = getRandomInt(100, 1028);
     const height = getRandomInt(100, 700);
     const cat = await fetch(`http://placekitten.com/${width}/${height}`);
-    console.log('meow! meow! 🐈 i have a cat!', cat, cat.url);
-    const img = document.querySelectorAll('img[name="randomCat"]');
-    img[0].src = cat.url;
+    console.log('meow! meow! 🐈 i have a cat!!!!', cat, cat.url);
+    const img = document.createElement('img') as HTMLImageElement;
+    img.src = cat.url;
+    document.body.appendChild(img);
     return cat;
   },
 };

@@ -25,11 +25,13 @@
     "npm": "^9.8.0",
     "terser-webpack-plugin": "^5.3.9",
     "transform": "^1.1.2",
+    "ts-loader": "^9.4.4",
     "typescript": "^5.1.6",
     "webpack": "^5.88.1",
     "webpack-cli": "^5.1.4"
   },
   "scripts": {
+    "dev": "webpack --config webpack.config.js --watch",
     "demo": "node ./demo.js",
     "es6-demo": "node ./es6dist.js",
     "build-es6-modules": "webpack --config webpack.config.js --mode production --env task=build-modules"
