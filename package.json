@@ -20,6 +20,7 @@
     "grunt-contrib-copy": "~0.5.0",
     "grunt-contrib-jshint": "~0.8.0",
     "grunt-contrib-uglify": "~0.2.7",
+    "husky": "^8.0.3",
     "i": "^0.3.7",
     "jest": "^29.6.1",
     "jest-environment-jsdom": "^29.6.1",
