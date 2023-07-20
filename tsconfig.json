@@ -4,5 +4,9 @@
     "module": "commonjs",
     "esModuleInterop": true
   },
-  "include": ["es6src/**/*.ts"]
+  "include": ["es6src/**/*.ts"],
+  "exclude": [
+    "es6src/**/*.spec.ts",
+    "es6src/**/*.spec.js"
+  ]
 }

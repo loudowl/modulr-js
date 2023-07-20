@@ -17,7 +17,7 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /\.spec\.ts$/, /\.spec\.js$/],
         use: {
           loader: 'babel-loader',
           options: {
@@ -40,6 +40,7 @@ module.exports = {
           globOptions: {
             dot: true,
             gitignore: true,
+            ignore: ['**/*.spec.ts', '**/*.spec.js'],
           },
           to({ context, absoluteFilename }) {
             const relativePath = path.relative(context, absoluteFilename);

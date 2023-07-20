@@ -7,7 +7,7 @@ const getRandomInt = (min, max): number => {
 const randomCat = {
   foo: 'foo',
   baz: 'baz',
-  loadACat: async () => {
+  loadACat: async (): Promise<{ url: string }> => {
     console.log("meow, I'm an async function that gets a random cat....");
     const width = getRandomInt(100, 1028);
     const height = getRandomInt(100, 700);
