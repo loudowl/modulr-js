@@ -34,10 +34,11 @@
     "ts-loader": "^9.4.4",
     "typescript": "^5.1.6",
     "webpack": "^5.88.1",
-    "webpack-cli": "^5.1.4"
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
-    "dev": "webpack --config webpack.config.js --watch",
+    "dev": "webpack serve --open --mode=development",
     "demo": "node ./demo.js",
     "es6-demo": "node ./es6dist.js",
     "build-es6-modules": "webpack --config webpack.config.js --mode production --env task=build-modules",

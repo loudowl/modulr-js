@@ -13,6 +13,14 @@ module.exports = {
     libraryExport: 'default',
     libraryTarget: 'umd',
   },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'es6dist'),
+    },
+    compress: true,
+    hot: true,
+    port: 9000,
+  },
   module: {
     rules: [
       {
